@@ -3,7 +3,7 @@
 	Copyright (C) 2020 BrunoMine (https://github.com/BrunoMine)
 	
 	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <https://www.gnu.org/licenses/>5.
+	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	
   ]]
 
@@ -15,9 +15,11 @@ local modpath = minetest.get_modpath("cidades")
 
 dofile(modpath.."/data_base.lua")
 
+dofile(modpath.."/protected_area.lua")
 dofile(modpath.."/number_nodes.lua")
+dofile(modpath.."/land.lua")
 
---dofile(modpath.."/city.lua")
+dofile(modpath.."/city.lua")
 dofile(modpath.."/city_builder.lua")
 --dofile(modpath.."/city_stone.lua")
 
@@ -25,7 +27,7 @@ dofile(modpath.."/property.lua")
 dofile(modpath.."/property_builder.lua")
 dofile(modpath.."/property_stone.lua")
 
---dofile(modpath.."/teleporter.lua")
+dofile(modpath.."/teleporter.lua")
 
 dofile(modpath.."/seller_node.lua")
 

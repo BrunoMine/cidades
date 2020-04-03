@@ -3,48 +3,48 @@
 	Copyright (C) 2020 BrunoMine (https://github.com/BrunoMine)
 	
 	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <https://www.gnu.org/licenses/>5.
+	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	
 	Data Base
   ]]
 
-local mod_storage = minetest.get_mod_storage()
-
 cidades.db = {}
 
+cidades.db.ms = minetest.get_mod_storage()
 
 -- Set City def
-cidades.db.set_city = function(city_name, def)
-	mod_storage:set_string("city_"..city_name, minetest.serialize(def))
+cidades.db.set_city = function(city_name, data)
+	cidades.db.ms:set_string("city_"..city_name, minetest.serialize(data))
 end
 
 -- Get City def
 cidades.db.get_city = function(city_name)
-	return minetest.deserialize(mod_storage:get_string("city_"..city_name))
+	return minetest.deserialize(cidades.db.ms:get_string("city_"..city_name))
 end
 
 
--- Set Property def
-cidades.db.set_property = function(owner, def)
-	mod_storage:set_string("property_"..owner, minetest.serialize(def))
+-- Set Property data
+cidades.db.set_property = function(owner, data)
+	cidades.db.ms:set_string("property_"..owner, minetest.serialize(data))
 end
 
--- Get Property def
+-- Remove Property data
+cidades.db.reset_property = function(owner)
+	cidades.db.ms:set_string("property_"..owner, "")
+end
+
+-- Get Property data
 cidades.db.get_property = function(owner)
-	return minetest.deserialize(mod_storage:get_string("property_"..owner))
+	return minetest.deserialize(cidades.db.ms:get_string("property_"..owner))
 end
 
 -- Check Property
 cidades.db.check_property = function(owner)
-	if mod_storage:get_string("property_"..owner) ~= "" then
+	if cidades.db.ms:get_string("property_"..owner) ~= "" then
 		return true
 	end
 	return false
 end
 
 
--- Active cities
-cidades.update_active_cities = function(city_name, status)
-	cidades.active_cities[city_name] = status
-	mod_storage:set_string("active_cities", minetest.serialize(cidades.active_cities))
-end
+

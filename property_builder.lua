@@ -3,7 +3,7 @@
 	Copyright (C) 2020 BrunoMine (https://github.com/BrunoMine)
 	
 	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <https://www.gnu.org/licenses/>5.
+	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	
 	Property Builder
   ]]
@@ -39,8 +39,11 @@ local create_property = function(pos)
 	-- Set seller
 	minetest.set_node({x=pos.x, y=pos.y+1, z=pos.z}, {name = "cidades:seller"})
 	
+	-- Place poles
+	cidades.place_poles({x=pos.x, y=pos.y-2, z=pos.z}, radius)
+	
 	-- Remove property builder
-	--minetest.remove_node(pos)
+	minetest.remove_node(pos)
 	
 	minetest.chat_send_all("Property created")
 end

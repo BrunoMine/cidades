@@ -3,7 +3,7 @@
 	Copyright (C) 2020 BrunoMine (https://github.com/BrunoMine)
 	
 	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <https://www.gnu.org/licenses/>5.
+	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	
 	Seller node
   ]]
@@ -20,10 +20,9 @@ local seller_access = function(player, pos)
 	local width = (data.radius * 2) + 1
 	
 	-- Button status
-	local status = "button[0,2.35;5,1;buy;Buy]"
-	if cidades.db.check_property(name) ~= true then
-		status = "label[0,2.35;"..minetest.colorize("#ff0707", "You already own land.")
-			.."\n"..minetest.colorize("#ff0707", "Sell it to buy that one.").."]"
+	local text = "Make sure you can pay."
+	if cidades.db.check_property(name) == true then
+		text = minetest.colorize("#ff0707", "You already own land. Sell it to buy that one.")
 	end
 	
 	minetest.show_formspec(name, "cidades:seller", 
@@ -32,12 +31,40 @@ local seller_access = function(player, pos)
 		.."\nHeight: "..data.height
 		.."\nWidth: "..width
 		.."\nTotal buildable area: "..(width*width*(data.height)).." blocks"
-		.."\nCost: "..data.cost.."]"
-		..status
+		.."\nCost: "..data.cost
+		.."\n"..text.."]"
+		.."button_exit[0,2.35;5,1;buy;Buy]"
 	)
 	
-	
 end
+
+
+minetest.register_on_player_receive_fields(function(player, formname, fields)
+	if formname == "cidades:seller" then
+		local name = player:get_player_name()
+		local pos = minetest.deserialize(player:get_attribute("cidades:seller_pos"))
+		local data = cidades.property.get_data({x=pos.x, y=pos.y-3, z=pos.z})
+		
+		if fields.buy then
+			-- Check property
+			if cidades.db.check_property(name) == true then
+				return minetest.chat_send_player(name, "You already own land. Sell it to buy that one.")
+			end
+			
+			if player:get_inventory():contains_item("main", cidades.money_item.." "..data.cost) == false then
+				return minetest.chat_send_player(name, "You can not pay that.")
+			end
+			
+			-- Get payment
+			player:get_inventory():remove_item("main", cidades.money_item.." "..data.cost)
+			minetest.remove_node(pos)
+			
+			cidades.set_owner(player, {x=pos.x, y=pos.y-3, z=pos.z}, data)
+			
+			minetest.chat_send_player(name, "Land purchased.")
+		end
+	end
+end)
 
 
 -- Seller node

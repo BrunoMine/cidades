@@ -8,7 +8,7 @@
 	City Builder
   ]]
 
-
+-- Area mark node
 minetest.register_node("cidades:area_mark", {
 	description = "Area Mark",
 	tiles = {"cidades_area_mark.png"},
@@ -51,7 +51,7 @@ local mark_area = function(pos)
 	end
 end
 
--- Create Schematic
+-- Export Schematic
 local export_city = function(pos)
 	local meta = minetest.get_meta(pos)
 	local radius = meta:get_float("radius")
@@ -80,7 +80,7 @@ local export_city = function(pos)
 	minetest.chat_send_all("Schematic successfully exported. Restart the world to import it. "..filename.." file is in the world directory ('cities in work' folder).")
 end
 
--- Load Schematic
+-- Import Schematic
 local import_city = function(pos)
 	local meta = minetest.get_meta(pos)
 	local radius = meta:get_float("radius")

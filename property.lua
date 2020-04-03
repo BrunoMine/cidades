@@ -3,7 +3,7 @@
 	Copyright (C) 2020 BrunoMine (https://github.com/BrunoMine)
 	
 	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <https://www.gnu.org/licenses/>5.
+	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	
 	Property
   ]]
@@ -107,6 +107,7 @@ cidades.property.get_data_pos = function(pos, data_type, def)
 	end
 end
 
+
 -- Get property data
 cidades.property.get_data = function(pos)
 	local height = cidades.property.height[tostring(cidades.number_node[minetest.get_node(cidades.property.get_data_pos(pos, "height")).name])]
@@ -124,3 +125,78 @@ cidades.property.get_data = function(pos)
 end
 
 
+-- Set owner
+cidades.set_owner = function(player, pos, data)
+	
+	-- Update property stone
+	minetest.set_node(pos, {name="cidades:property_stone_purchased"})
+	
+	-- Minp & Maxp
+	local minp = {
+		x=pos.x-data.radius, 
+		y=pos.y+1, 
+		z=pos.z-data.radius
+	}
+	local maxp = {
+		x=pos.x+data.radius, 
+		y=pos.y+1+data.height, 
+		z=pos.z+data.radius
+	}
+	
+	-- Protect area
+	local area_id = cidades.protect_area(player:get_player_name(), "Property", minp, maxp)
+	
+	-- Update metadata
+	data.pos = pos
+	data.width = (data.radius * 2) + 1
+	data.minp = minp
+	data.maxp = maxp
+	data.soil_node = minetest.get_node({x=pos.x, y=pos.y+1, z=pos.z}).name
+	data.owner = player:get_player_name()
+	data.area_id = area_id
+	
+	-- Update data base
+	cidades.db.set_property(data.owner, data)
+	
+	minetest.get_meta(pos):set_string("stone_data", minetest.serialize(data))
+end
+
+
+-- Reset owner
+cidades.reset_property = function(pos, data)
+	
+	-- Update property stone
+	minetest.set_node({x=pos.x, y=pos.y-3, z=pos.z}, {name="cidades:property_stone_for_sale"})
+	
+	-- Update data base
+	cidades.db.reset_property(data.owner)
+	
+	-- Restore land
+	cidades.restore_land(pos, data)
+	
+	-- Unprotect area
+	cidades.unprotect_area(data.area_id)
+	
+	-- Place poles
+	cidades.place_poles(pos, data.radius)
+	
+	-- Place seller
+	minetest.set_node({x=pos.x, y=pos.y+3, z=pos.z}, {name="cidades:seller"})
+	
+	-- Update metadata
+	data.owner = nil
+end
+
+
+minetest.register_chatcommand("reset_property", {
+	params = "None",
+	description = "Reset self property",
+	func = function(name, param)
+		if cidades.db.check_property(name) == false then
+			return false, "No property"
+		end
+		
+		-- Remove registry
+		cidades.db.reset_property(name)
+	end,
+})
