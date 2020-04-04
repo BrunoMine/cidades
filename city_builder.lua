@@ -8,9 +8,11 @@
 	City Builder
   ]]
 
+local S = cidades.S
+
 -- Area mark node
 minetest.register_node("cidades:area_mark", {
-	description = "Area Mark",
+	description = "Area mark",
 	tiles = {"cidades_area_mark.png"},
 	groups = {choppy = 2, oddly_breakable_by_hand = 2, not_in_creative_inventory = 1},
 	drop = "",
@@ -77,10 +79,10 @@ local export_city = function(pos)
 	minetest.mkdir(minetest.get_worldpath().."/cities in work")
 	
 	if minetest.create_schematic(minp, maxp, {}, minetest.get_worldpath().."/cities in work/"..filename) ~= true then
-		return minetest.chat_send_all("Export failed.")
+		return minetest.chat_send_all(S("Export failed."))
 	end
 	
-	minetest.chat_send_all("Schematic successfully exported. Restart the world to import it. "..filename.." file is in the world directory ('cities in work' folder).")
+	minetest.chat_send_all(S("Schematic successfully exported. Restart the world to import it. '@1' file is in the world directory ('cities in work' folder).", filename))
 end
 
 -- Import Schematic
@@ -99,10 +101,10 @@ local import_city = function(pos)
 	local filename = meta:get_string("city_id")..".mts"
 	
 	if minetest.place_schematic(minp, minetest.get_worldpath().."/cities in work/"..filename) ~= true then
-		return minetest.chat_send_all("Import failed.")
+		return minetest.chat_send_all(S("Import failed."))
 	end
 	
-	minetest.chat_send_all("Schematic successfully imported.")
+	minetest.chat_send_all(S("Schematic successfully imported."))
 end
 
 
@@ -111,23 +113,23 @@ local update_formspec = function(pos)
 	local meta = minetest.get_meta(pos)
 	
 	meta:set_string("formspec", "size[8,8]"
-		.."field[1,1;6,1;city_id;City ID (eg. wood_ville);"..meta:get_string("city_id").."]"
-		.."field[1,4;2,1;radius;Radius;"..meta:get_float("radius").."]"
-		.."field[3,4;2,1;height;Height;"..meta:get_float("height").."]"
-		.."field[5,4;2,1;depth;Depth;"..meta:get_float("depth").."]"
+		.."field[1,1;6,1;city_id;"..S("City ID (eg. wood_ville)")..";"..meta:get_string("city_id").."]"
+		.."field[1,4;2,1;radius;"..S("Radius")..";"..meta:get_float("radius").."]"
+		.."field[3,4;2,1;height;"..S("Height")..";"..meta:get_float("height").."]"
+		.."field[5,4;2,1;depth;"..S("Depth")..";"..meta:get_float("depth").."]"
 		
-		.."label[0.5,5;This node is the reference for central position]"
-		.."label[0.5,5.5;Spawn position for this city is 6 blocks above this block.]"
+		.."label[0.5,5;"..S("This node is the reference for central position.").."]"
+		.."label[0.5,5.5;"..S("Spawn position for this city is 6 blocks above this block.").."]"
 		
-		.."button_exit[1,7;2,1;export;Export]"
-		.."button_exit[3,7;2,1;import;Import]"
-		.."button_exit[5,7;2,1;mark;Mark]")
+		.."button_exit[1,7;2,1;export;"..S("Export").."]"
+		.."button_exit[3,7;2,1;import;"..S("Import").."]"
+		.."button_exit[5,7;2,1;mark;"..S("Mark").."]")
 end
 
 
 -- City Builder node
 minetest.register_node("cidades:city_builder", {
-	description = "City Builder",
+	description = S("City Builder"),
 	paramtype2 = "facedir",
 	place_param2 = 0,
 	tiles = {"cidades_city_builder.png"},
@@ -136,7 +138,7 @@ minetest.register_node("cidades:city_builder", {
 	
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
-		meta:set_string("infotext", "City Builder")
+		meta:set_string("infotext", S("City Builder"))
 		
 		meta:set_string("city_id", "")
 		meta:set_int("radius", 80)

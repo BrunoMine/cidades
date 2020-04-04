@@ -17,10 +17,18 @@ cidades.extra_protect_bottom_area = tonumber(minetest.settings:get("cidades_extr
 
 cidades.max_days_inactive_owner = tonumber(minetest.settings:get("cidades_max_days_inactive_owner") or 60)
 
+cidades.resale_factor = tonumber(minetest.settings:get("cidades_resale_factor") or 0.5)
+if cidades.resale_factor > 1 then 
+	cidades.resale_factor = 1
+end
+
+
 local modpath = minetest.get_modpath("cidades")
 
 dofile(modpath.."/data_base.lua")
+dofile(modpath.."/translator.lua")
 
+dofile(modpath.."/exchange.lua")
 dofile(modpath.."/time_count.lua")
 dofile(modpath.."/protected_area.lua")
 dofile(modpath.."/number_nodes.lua")

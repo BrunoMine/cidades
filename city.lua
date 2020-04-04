@@ -3,11 +3,12 @@
 	Copyright (C) 2020 BrunoMine (https://github.com/BrunoMine)
 	
 	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <https://www.gnu.org/licenses/>5.
+	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	
 	City Builder
   ]]
 
+local S = cidades.S
 
 -- Registered cities
 cidades.registered_cities = {}
@@ -97,16 +98,16 @@ cidades.create_city = function(city_id, pos)
 end
 
 minetest.register_chatcommand("create_city", {
-	params = "City ID",
-	description = "Create an active city",
+	params = S("City ID"),
+	description = S("Create an active city"),
 	func = function(name, param)
 		if not param or param == "" or not cidades.registered_cities[param] then
-			minetest.chat_send_player(name, "Invalid City ID")
+			minetest.chat_send_player(name, S("Invalid City ID"))
 			return
 		end
 		
 		cidades.create_city(param, vector.round(minetest.get_player_by_name(name):get_pos()))
-		minetest.chat_send_player(name, cidades.registered_cities[param].name.." created.")
+		minetest.chat_send_player(name, S("@1 created.", cidades.registered_cities[param].name))
 		
 	end,
 })

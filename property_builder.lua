@@ -8,7 +8,7 @@
 	Property Builder
   ]]
 
-
+local S = cidades.S
 
 -- Create property
 local create_property = function(pos)
@@ -54,16 +54,16 @@ local update_formspec = function(pos)
 	local meta = minetest.get_meta(pos)
 	
 	meta:set_string("formspec", "size[8,8]"
-		.."field[1,3;6.5,1;radius;Radius (3 - 12);"..meta:get_float("radius").."]"
-		.."field[1,4.5;6.5,1;height;Height (3, 5, 8, 10, 12, 14, 16, 18, 20 or 25);"..meta:get_float("height").."]"
-		.."field[1,6;6.5,1;cost;Cost (10 - 9990);"..meta:get_float("cost").."]"
-		.."button_exit[1,7;6,1;create;Create]")
+		.."field[1,3;6.5,1;radius;"..S("Radius (3 - 12)")..";"..meta:get_float("radius").."]"
+		.."field[1,4.5;6.5,1;height;"..S("Height (3, 5, 8, 10, 12, 14, 16, 18, 20 or 25)")..";"..meta:get_float("height").."]"
+		.."field[1,6;6.5,1;cost;"..S("Cost (10 - 9990)")..";"..meta:get_float("cost").."]"
+		.."button_exit[1,7;6,1;create;"..S("Create").."]")
 end
 
 
 -- Property Builder node
 minetest.register_node("cidades:property_builder", {
-	description = "Property Builder",
+	description = S("Property Builder"),
 	paramtype2 = "facedir",
 	place_param2 = 0,
 	tiles = {"cidades_property_builder.png"},
@@ -72,7 +72,7 @@ minetest.register_node("cidades:property_builder", {
 	
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
-		meta:set_string("infotext", "Property Builder")
+		meta:set_string("infotext", S("Property Builder"))
 		
 		meta:set_int("radius", 4)
 		meta:set_int("height", 5)
@@ -95,19 +95,19 @@ minetest.register_node("cidades:property_builder", {
 			if cidades.property.radius_i[fields.radius] then
 				meta:set_float("radius", tonumber(fields.radius))
 			else
-				return minetest.chat_send_all("Invalid radius")
+				return minetest.chat_send_all(S("Invalid radius."))
 			end
 			
 			if cidades.property.height_i[fields.height] then
 				meta:set_float("height", tonumber(fields.height))
 			else
-				return minetest.chat_send_all("Invalid height")
+				return minetest.chat_send_all(S("Invalid height."))
 			end
 			
 			if tonumber(fields.cost) <= 9990 and tonumber(fields.cost) >= 10 then
 				meta:set_float("cost", tonumber(fields.cost))
 			else
-				return minetest.chat_send_all("Invalid cost")
+				return minetest.chat_send_all(S("Invalid cost."))
 			end
 			
 			update_formspec(pos)

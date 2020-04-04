@@ -8,6 +8,7 @@
 	Property
   ]]
 
+local S = cidades.S
 
 cidades.property = {}
 
@@ -108,6 +109,12 @@ cidades.property.get_data_pos = function(pos, data_type, def)
 end
 
 
+-- Get resale price
+cidades.get_sale_price = function(cost)
+	return cost * cidades.resale_factor
+end
+
+
 -- Get property data
 cidades.property.get_data = function(pos)
 	local height = cidades.property.height[tostring(cidades.number_node[minetest.get_node(cidades.property.get_data_pos(pos, "height")).name])]
@@ -195,12 +202,12 @@ cidades.reset_property = function(pos, data)
 end
 
 
-minetest.register_chatcommand("reset_property", {
-	params = "None",
-	description = "Reset self property",
+minetest.register_chatcommand("sell_property", {
+	params = S("None"),
+	description = S("Sell property"),
 	func = function(name, param)
 		if cidades.db.check_property(name) == false then
-			return false, "No property"
+			return false, S("No property.")
 		end
 		
 		-- Remove registry

@@ -16,7 +16,8 @@ minetest.register_node("cidades:property_stone_for_sale", {
 	place_param2 = 0,
 	tiles = {"default_stone.png"},
 	is_ground_content = false,
-	groups = {choppy = 2, oddly_breakable_by_hand = 2, stone = 1},
+	drop = "default:stone",
+	groups = {choppy = 2, oddly_breakable_by_hand = 2, stone = 1, not_in_creative_inventory = 1},
 	sounds = default.node_sound_stone_defaults(),
 })
 
@@ -32,7 +33,8 @@ minetest.register_node("cidades:property_stone_purchased", {
 	place_param2 = 0,
 	tiles = {"default_stone.png"},
 	is_ground_content = false,
-	groups = {choppy = 2, oddly_breakable_by_hand = 2, stone = 1},
+	drop = "default:stone",
+	groups = {choppy = 2, oddly_breakable_by_hand = 2, stone = 1, not_in_creative_inventory = 1},
 	sounds = default.node_sound_stone_defaults(),
 })
 
@@ -45,6 +47,7 @@ cidades.check_property_stone = function(pos)
 	-- Check data base registry
 	if cidades.db.check_property(data.owner) == false then
 		cidades.reset_property(pos, data)
+		return
 	end
 	
 	-- Check las login

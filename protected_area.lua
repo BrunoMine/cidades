@@ -8,6 +8,7 @@
 	Protected area
   ]]
 
+local S = cidades.S
 
 -- Protect area
 cidades.protect_area = function(ownername, areaname, pos1, pos2)

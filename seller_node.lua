@@ -8,6 +8,10 @@
 	Seller node
   ]]
 
+local S = cidades.S
+
+-- Get value to text
+local to_text = cidades.exchange.get_value_to_text
 
 -- Access
 local seller_access = function(player, pos)
@@ -20,20 +24,21 @@ local seller_access = function(player, pos)
 	local width = (data.radius * 2) + 1
 	
 	-- Button status
-	local text = "Make sure you can pay."
+	local text = S("Make sure you can pay.")
 	if cidades.db.check_property(name) == true then
-		text = minetest.colorize("#ff0707", "You already own land. Sell it to buy that one.")
+		text = minetest.colorize("#ff0707", S("You already own land. Sell it to buy that one."))
 	end
 	
 	minetest.show_formspec(name, "cidades:seller", 
-		"size[5,3]"
-		.."label[0,-0.15;Land for sale"
-		.."\nHeight: "..data.height
-		.."\nWidth: "..width
-		.."\nTotal buildable area: "..(width*width*(data.height)).." blocks"
-		.."\nCost: "..data.cost
+		"size[5,3.5]"
+		.."label[0,-0.15;"..S("Land for sale")
+		.."\n"..S("Height: @1", data.height)
+		.."\n"..S("Width: @1", width)
+		.."\n"..S("Total buildable area: @1 blocks", (width*width*(data.height)))
+		.."\n"..S("Price: @1", to_text(data.cost))
+		.."\n"..S("Sale price: @1", to_text(cidades.get_sale_price(data.cost)))
 		.."\n"..text.."]"
-		.."button_exit[0,2.35;5,1;buy;Buy]"
+		.."button_exit[0,2.85;5,1;buy;"..S("Buy").."]"
 	)
 	
 end
@@ -48,21 +53,22 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		if fields.buy then
 			-- Check property
 			if cidades.db.check_property(name) == true then
-				return minetest.chat_send_player(name, "You already own land. Sell it to buy that one.")
+				return minetest.chat_send_player(name, S("You already own land. Sell it to buy that one."))
 			end
 			
 			-- Check payment
-			if player:get_inventory():contains_item("main", cidades.money_item.." "..data.cost) == false then
-				return minetest.chat_send_player(name, "You can not pay that.")
+			if cidades.exchange.has_payment(player, data.cost) == false then
+				minetest.chat_send_player(name, S("Insufficient payment."))
+				return 
 			end
 			
 			-- Get payment
-			player:get_inventory():remove_item("main", cidades.money_item.." "..data.cost)
+			cidades.exchange.take(player, data.cost)
 			minetest.remove_node(pos)
 			
 			cidades.set_owner(player, {x=pos.x, y=pos.y-3, z=pos.z}, data)
 			
-			minetest.chat_send_player(name, "Land purchased.")
+			minetest.chat_send_player(name, S("Land purchased."))
 		end
 	end
 end)
@@ -119,6 +125,7 @@ minetest.register_node("cidades:seller", {
 	drawtype = "airlike",
 	collisionbox = {-0.4,-0.4,-0.4, 0.4,0.4,0.4},
 	is_ground_content = false,
+	drop = "",
 	groups = {choppy = 2, oddly_breakable_by_hand = 2, not_in_creative_inventory = 1},
 	
 	on_construct = function(pos)

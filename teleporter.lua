@@ -8,6 +8,7 @@
 	Teleporter
   ]]
 
+local S = cidades.S
 
 -- Cities
 local cities_string_list = ""
@@ -17,9 +18,9 @@ local cities_list = {}
 local formspec = "size[6,5]"
 	..default.gui_bg
 	..default.gui_bg_img
-	.."label[0.5,0;Choose a city]"
+	.."label[0.5,0;"..S("Choose a city").."]"
 	.."textlist[0.5,0.8;4.8,3;city;]"
-	.."button_exit[1,4.2;4,1;teleport;Go]"
+	.."button_exit[1,4.2;4,1;teleport;"..S("Go").."]"
 
 -- Atualizar lista de vilas
 local update_list = function()
@@ -46,7 +47,7 @@ local update_list = function()
 	formspec = "size[6,5]"
 		..default.gui_bg
 		..default.gui_bg_img
-		.."label[0.5,0;Choose a city]"
+		.."label[0.5,0;"..S("Choose a city").."]"
 		.."textlist[0.5,0.8;4.8,3;city;"..cities_string_list.."]"
 end
 update_list()
@@ -54,7 +55,7 @@ update_list()
 local show_formspec = function(player)
 	local name = player:get_player_name()
 	if player:get_attribute("cidades:teleporter_choose") ~= nil then
-		minetest.show_formspec(name, "cidades:teleporter", formspec.."button_exit[1,4.2;4,1;teleport;Go]")
+		minetest.show_formspec(name, "cidades:teleporter", formspec.."button_exit[1,4.2;4,1;teleport;"..S("Go").."]")
 	else
 		minetest.show_formspec(name, "cidades:teleporter", formspec)
 	end
@@ -88,7 +89,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			player:set_pos(cities_list[id].pos)
 			
 			minetest.close_formspec(name, "cidades:teleporter")
-			minetest.chat_send_player(name, "Welcome to "..cities_list[id].name)
+			minetest.chat_send_player(name, S("Welcome to @1", cities_list[id].name))
 		end
 		
 		if fields.quit then
@@ -100,10 +101,17 @@ end)
 
 -- Teleporter
 minetest.register_node("cidades:teleporter", {
-	description = "Teleporter",
+	description = S("Teleporter"),
 	paramtype2 = "facedir",
 	place_param2 = 0,
-	tiles = {"default_wood.png^default_diamond.png"},
+	tiles = {
+		"default_wood.png",
+		"default_wood.png",
+		"default_wood.png^cidades_teleporter.png", 
+		"default_wood.png^cidades_teleporter.png", 
+		"default_wood.png^cidades_teleporter.png", 
+		"default_wood.png^cidades_teleporter.png" 
+	},
 	is_ground_content = false,
 	groups = {choppy = 2, oddly_breakable_by_hand = 2},
 	
