@@ -66,7 +66,7 @@ minetest.register_node("cidades:property_builder", {
 	description = "Property Builder",
 	paramtype2 = "facedir",
 	place_param2 = 0,
-	tiles = {"default_wood.png^default_paper.png"},
+	tiles = {"cidades_property_builder.png"},
 	is_ground_content = false,
 	groups = {choppy = 2, oddly_breakable_by_hand = 2},
 	

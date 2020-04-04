@@ -3,7 +3,7 @@
 	Copyright (C) 2020 BrunoMine (https://github.com/BrunoMine)
 	
 	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <https://www.gnu.org/licenses/>5.
+	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	
 	City Builder
   ]]
@@ -12,7 +12,7 @@
 minetest.register_node("cidades:area_mark", {
 	description = "Area Mark",
 	tiles = {"cidades_area_mark.png"},
-	groups = {choppy = 2, oddly_breakable_by_hand = 2},
+	groups = {choppy = 2, oddly_breakable_by_hand = 2, not_in_creative_inventory = 1},
 	drop = "",
 })
 
@@ -49,6 +49,9 @@ local mark_area = function(pos)
 		minetest.set_node({x=maxp.x, y=maxp.y, z=z}, {name="cidades:area_mark"})
 		minetest.set_node({x=minp.x, y=maxp.y, z=z}, {name="cidades:area_mark"})
 	end
+	
+	-- Remove node mark inside
+	cidades.vm.replace(vector.add(minp, 1), vector.subtract(maxp, 1), {["cidades:area_mark"]="air"})
 end
 
 -- Export Schematic
@@ -127,7 +130,7 @@ minetest.register_node("cidades:city_builder", {
 	description = "City Builder",
 	paramtype2 = "facedir",
 	place_param2 = 0,
-	tiles = {"default_wood.png^default_apple.png"},
+	tiles = {"cidades_city_builder.png"},
 	is_ground_content = false,
 	groups = {choppy = 2, oddly_breakable_by_hand = 2},
 	
