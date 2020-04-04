@@ -20,6 +20,10 @@ minetest.register_node("cidades:property_stone_for_sale", {
 	sounds = default.node_sound_stone_defaults(),
 })
 
+cidades.register_node_fix("cidades:property_stone_for_sale", function(pos, city_id)
+	minetest.get_meta(pos):set_string("city_id", city_id)
+end)
+
 
 -- Property Stone Purchased
 minetest.register_node("cidades:property_stone_purchased", {
@@ -42,10 +46,23 @@ cidades.check_property_stone = function(pos)
 	if cidades.db.check_property(data.owner) == false then
 		cidades.reset_property(pos, data)
 	end
+	
+	-- Check las login
+	local db_data = cidades.db.get_property(data.owner)
+	if cidades.get_date_hash() - db_data.last_login > cidades.max_days_inactive_owner then
+		cidades.reset_property(pos, data)
+	end
 end
 
+minetest.register_lbm({
+	name = "cidades:check_property",
+	nodenames = {"cidades:property_stone_purchased"},
+	run_at_every_load = true,
+	action = function(pos, node)
+		cidades.check_property_stone(pos)
+	end,
+})
 
--- Check property stones
 minetest.register_abm{
         label = "check purchased property",
 	nodenames = {"cidades:property_stone_purchased"},
@@ -55,3 +72,19 @@ minetest.register_abm{
 		cidades.check_property_stone(pos)
 	end,
 }
+
+
+-- Update last login
+local update_last_login = function(player)
+	if not player then return end
+	local name = player:get_player_name()
+	
+	if cidades.db.check_property(name) == false then return end
+	
+	local data = cidades.db.get_property(name)
+	data.last_login = cidades.get_date_hash()
+end
+
+minetest.register_on_joinplayer(function(player)
+	update_last_login(player)
+end)

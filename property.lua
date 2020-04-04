@@ -128,6 +128,8 @@ end
 -- Set owner
 cidades.set_owner = function(player, pos, data)
 	
+	local city_id = minetest.get_meta(pos):get_string("city_id")
+	
 	-- Update property stone
 	minetest.set_node(pos, {name="cidades:property_stone_purchased"})
 	
@@ -148,12 +150,14 @@ cidades.set_owner = function(player, pos, data)
 	
 	-- Update metadata
 	data.pos = pos
+	data.city_id = city_id
 	data.width = (data.radius * 2) + 1
 	data.minp = minp
 	data.maxp = maxp
 	data.soil_node = minetest.get_node({x=pos.x, y=pos.y+1, z=pos.z}).name
 	data.owner = player:get_player_name()
 	data.area_id = area_id
+	data.last_login = cidades.get_date_hash()
 	
 	-- Update data base
 	cidades.db.set_property(data.owner, data)
@@ -164,9 +168,6 @@ end
 
 -- Reset owner
 cidades.reset_property = function(pos, data)
-	
-	-- Update property stone
-	minetest.set_node({x=pos.x, y=pos.y-3, z=pos.z}, {name="cidades:property_stone_for_sale"})
 	
 	-- Update data base
 	cidades.db.reset_property(data.owner)
@@ -182,6 +183,12 @@ cidades.reset_property = function(pos, data)
 	
 	-- Place seller
 	minetest.set_node({x=pos.x, y=pos.y+3, z=pos.z}, {name="cidades:seller"})
+	
+	-- Update property stone
+	minetest.set_node(pos, {name="cidades:property_stone_for_sale"})
+	
+	-- Save city_id
+	minetest.get_meta(pos):set_string("city_id", data.city_id)
 	
 	-- Update metadata
 	data.owner = nil
@@ -200,3 +207,7 @@ minetest.register_chatcommand("reset_property", {
 		cidades.db.reset_property(name)
 	end,
 })
+
+
+
+

@@ -51,6 +51,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				return minetest.chat_send_player(name, "You already own land. Sell it to buy that one.")
 			end
 			
+			-- Check payment
 			if player:get_inventory():contains_item("main", cidades.money_item.." "..data.cost) == false then
 				return minetest.chat_send_player(name, "You can not pay that.")
 			end

@@ -13,13 +13,13 @@ cidades.db = {}
 cidades.db.ms = minetest.get_mod_storage()
 
 -- Set City def
-cidades.db.set_city = function(city_name, data)
-	cidades.db.ms:set_string("city_"..city_name, minetest.serialize(data))
+cidades.db.set_city = function(city_id, data)
+	cidades.db.ms:set_string("city_"..city_id, minetest.serialize(data))
 end
 
 -- Get City def
-cidades.db.get_city = function(city_name)
-	return minetest.deserialize(cidades.db.ms:get_string("city_"..city_name))
+cidades.db.get_city = function(city_id)
+	return minetest.deserialize(cidades.db.ms:get_string("city_"..city_id))
 end
 
 

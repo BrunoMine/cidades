@@ -38,6 +38,12 @@ cidades.remove_active_city = function(city_id, def)
 	cidades.db.ms:set_string("active_cities", minetest.serialize(cidades.active_cities))
 end
 
+-- On create city callback
+cidades.registered_on_create_city = {}
+cidades.register_on_create_city = function(func)
+	table.insert(cidades.registered_on_create_city, func)
+end
+
 -- Create city
 cidades.create_city = function(city_id, pos)
 	
@@ -58,8 +64,21 @@ cidades.create_city = function(city_id, pos)
 	-- Place schem	
 	minetest.place_schematic(minp, city.schem_path)
 	
+	local epa = city.extra_protected_area or {}
+	
 	-- Protect area
-	local area_id = cidades.protect_area("Server city", city.name, minp, maxp)
+	local area_id = cidades.protect_area("Server city", city.name, 
+		{
+			x = minp.x - (epa.xn or epa.x or cidades.extra_protect_side_area), 
+			y = minp.y - (epa.yn or epa.y or cidades.extra_protect_bottom_area),
+			z = minp.z - (epa.zn or epa.z or cidades.extra_protect_side_area)
+		}, 
+		{
+			x = maxp.x + (epa.xp or epa.x or cidades.extra_protect_side_area), 
+			y = maxp.y + (epa.yp or epa.y or cidades.extra_protect_top_area),
+			z = maxp.z + (epa.zp or epa.z or cidades.extra_protect_side_area)
+		}
+	)
 	
 	-- Insert active city
 	cidades.insert_active_city(city_id, {
@@ -69,6 +88,11 @@ cidades.create_city = function(city_id, pos)
 		spawn = {x=pos.x, y=pos.y+6, z=pos.z},
 		area_id = area_id,
 	})
+	
+	-- Run on create city callback
+	for _,f in ipairs(cidades.registered_on_create_city) do
+		f(city_id)
+	end
 	
 end
 
@@ -81,7 +105,8 @@ minetest.register_chatcommand("create_city", {
 			return
 		end
 		
-		cidades.create_city(param, minetest.get_player_by_name(name):get_pos())
+		cidades.create_city(param, vector.round(minetest.get_player_by_name(name):get_pos()))
 		minetest.chat_send_player(name, cidades.registered_cities[param].name.." created.")
+		
 	end,
 })

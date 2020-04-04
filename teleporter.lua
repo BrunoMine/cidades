@@ -13,12 +13,13 @@
 local cities_string_list = ""
 local cities_list = {}
 
--- Fosmpec padrao
+-- Fosmpec
 local formspec = "size[6,5]"
 	..default.gui_bg
 	..default.gui_bg_img
 	.."label[0.5,0;Choose a city]"
-	.."label[0.5,0;Choose a city]"
+	.."textlist[0.5,0.8;4.8,3;city;]"
+	.."button_exit[1,4.2;4,1;teleport;Go]"
 
 -- Atualizar lista de vilas
 local update_list = function()
@@ -41,16 +42,12 @@ local update_list = function()
 		})
 	end
 	
-	if cities_string_list ~= "" then
-	
-		-- Update formspec
-		formspec = "size[6,5]"
-			..default.gui_bg
-			..default.gui_bg_img
-			.."label[0.5,0;Choose a city]"
-			.."textlist[0.5,0.8;4.8,3;city;"..cities_string_list.."]"
-			
-	end
+	-- Update formspec
+	formspec = "size[6,5]"
+		..default.gui_bg
+		..default.gui_bg_img
+		.."label[0.5,0;Choose a city]"
+		.."textlist[0.5,0.8;4.8,3;city;"..cities_string_list.."]"
 end
 update_list()
 
